@@ -5,18 +5,21 @@ function property($property)
 {
     $place = '';
     if ($property['place_prop'] != '') {
-        $place = '<div class="field-help">' . $property['place_prop'] . '</div>';
+        $place = '<div class="field-help">' . h($property['place_prop']) . '</div>';
     }
 
     $idProp = $property['id'];
     $allOption = '';
 
+    // basic input
     if ($property['type_prop'] == '1') {
         $result = '<div class="property-field name_select_rielt" data-property="' . $idProp . '" data-property-id="' . $idProp . '">
             <div class="field-label name">' . $property['name_prop'] . '</div>
             ' . $place . '
             <input type="text" class="text-input add-inp ag_pole_good" placeholder="' . $property['name_prop'] . '">
         </div>';
+
+    // dropdown
     } elseif ($property['type_prop'] == '2') {
         $answers = db()->query(
             "SELECT * FROM property_answer_s WHERE id_prop = '" . $idProp . "' ORDER BY sort_answer"
@@ -33,6 +36,8 @@ function property($property)
                 <option value="">Не выбрано</option>' . $allOption . '
             </select>
         </div>';
+
+    // multiselect
     } elseif ($property['type_prop'] == '3') {
         $answers = db()->query(
             "SELECT * FROM property_answer_s WHERE id_prop = '" . $idProp . "' ORDER BY sort_answer"
@@ -51,20 +56,24 @@ function property($property)
             ' . $place . '
             <div class="choice-grid checkbox_property ag_pole_good">' . $checkboxes . '</div>
         </div>';
+
+    // positive number
     } elseif ($property['type_prop'] == '4') {
         $result = '<div class="property-field name_select_rielt" data-property="' . $idProp . '" data-property-id="' . $idProp . '">
             <div class="field-label name">' . $property['name_prop'] . '</div>
             ' . $place . '
             <input type="text" inputmode="decimal" class="text-input add-inp ag_pole_good" placeholder="Числовое значение">
         </div>';
+    // undefined type
     } else {
-        $result = '';
+        $result = 'N/A';
     }
 
     return $result;
 }
 
-$properties = db()->query('SELECT * FROM property_s ORDER BY sort_prop');
+// $properties = db()->query('SELECT * FROM property_s ORDER BY sort_prop'); // debug: view all input types
+$properties = []; // default: do not display anything
 ?>
 <section class="scenario-column app-window">
     <header class="app-window-bar">
@@ -110,9 +119,14 @@ $properties = db()->query('SELECT * FROM property_s ORDER BY sort_prop');
                 </div>
 
                 <div class="properties property_all" aria-live="polite">
+                    
+                    <?if($properties):?>
                     <?php while ($property = $properties->fetch()): ?>
                         <?php echo property($property); ?>
                     <?php endwhile; ?>
+                    <? else:?>
+                    <?/* default: do not display anything */?>
+                    <? endif;?>
                 </div>
             </section>
         </div>
