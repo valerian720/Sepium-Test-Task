@@ -17,7 +17,19 @@
 
         $('.name_select_rielt').each(function () {
             var propertyId = $(this).attr('data-property');
-            var value = $(this).find('input.ag_pole_good, select.ag_pole_good').first().val();
+            var propertyType = $(this).attr('data-property-type');
+            var value = "";
+            switch (propertyType) {
+                case '3':
+                    let checkboxes = $(this).find('.choice input:checked');
+                    let values = [];
+                    checkboxes.each(function (i) { values.push($(this).data('val')); });
+                    if (values) { value = values.join(':'); }
+                    break;
+                default:
+                    value = $(this).find('input.ag_pole_good, select.ag_pole_good').first().val();
+                    break;
+            }
 
             if (value !== undefined && value !== '') {
                 propertyMas[propertyId] = value;
